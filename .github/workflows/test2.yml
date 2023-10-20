@@ -1,0 +1,44 @@
+on:
+    workflow_dispatch:
+      inputs:
+        tag_semver:
+          description: "Tag version following semver format"
+          required: true
+          type: string
+          default: 1.0.0
+  
+name: "Test conditions"
+  
+jobs:
+  commonA:
+    runs-on: ubuntu-latest
+    outputs:
+      my_var_a: ${{ steps.myStep.outputs.my_var_a }}
+      my_var_b: ${{ steps.myStep.outputs.my_var_b }}
+    steps:
+      - id: myStep
+        run: |
+          echo "MY_VAR_A=true" >> $GITHUB_OUTPUT
+          echo "MY_VAR_B=false" >> $GITHUB_OUTPUT
+
+      - if: inputs.tag_semver == '1' && steps.myStep.outputs.my_var_a == 'true'
+        run: |
+          echo "done..."
+
+  commonB:
+    runs-on: ubuntu-latest
+    needs: commonA
+    steps:
+      - if: needs.commonA.outputs.my_var_a == 'true'
+        run: |
+          echo "done..."
+
+      - if: needs.commonA.outputs.my_var_a == 'false'
+        run: |
+          echo "done..."
+
+      - if: inputs.tag_semver == '1' && needs.commonA.outputs.my_var_a == 'true'
+        run: |
+          echo "done..."
+
+
