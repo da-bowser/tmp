@@ -31,7 +31,7 @@ jobs:
         echo "Doing stuff"
 
   gate_qa:
-    needs: gate_test
+    needs: test_deploy
     runs-on: ubuntu-latest
     name: Check qa
     environment: qa
@@ -48,7 +48,7 @@ jobs:
         echo "Doing more stuff"
         
   gate_prod:
-    needs: gate_qa
+    needs: qa_deploy
     runs-on: ubuntu-latest
     name: Check prod
     environment: prod
