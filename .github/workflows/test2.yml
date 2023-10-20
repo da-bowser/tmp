@@ -29,6 +29,11 @@ jobs:
     runs-on: ubuntu-latest
     needs: commonA
     steps:
+      - id: myStep
+        run: |
+          echo "MY_VAR_X=true" >> $GITHUB_OUTPUT
+          echo "MY_VAR_Y=false" >> $GITHUB_OUTPUT
+
       - if: needs.commonA.outputs.my_var_a == 'true'
         run: |
           echo "done..."
@@ -40,5 +45,10 @@ jobs:
       - if: inputs.tag_semver == '1' && needs.commonA.outputs.my_var_a == 'true'
         run: |
           echo "done..."
+
+      - if: needs.commonA.outputs.my_var_a == 'true' && steps.myStep.outputs.my_var_x == 'true'
+        run: |
+          echo "done..."
+
 
 
