@@ -1,0 +1,66 @@
+on:
+    workflow_dispatch:
+      inputs:
+        tag_semver:
+          description: "Tag version following semver format"
+          required: true
+          type: string
+          default: 1.0.0
+  
+  name: "Transport"
+  run-name: Transport
+  
+  concurrency:
+    group: transport
+  
+  jobs:
+    gate_test:
+      runs-on: ubuntu-latest
+      name: Check test
+      environment: test
+      steps:
+        - run: |
+            echo "Check test"
+    
+    test_deploy:
+      needs: gate_test        
+      runs-on: ubuntu-latest
+      environment: test
+      steps:
+        - run: |
+            echo "Doing stuff"
+
+    gate_qa:
+      needs: gate_test
+      runs-on: ubuntu-latest
+      name: Check qa
+      environment: qa
+      steps:
+        - run: |
+            echo "Check qa"
+
+    qa_deploy:
+      needs: gate_qa       
+      runs-on: ubuntu-latest
+      environment: qa
+      steps:
+        - run: |
+            echo "Doing more stuff"
+          
+    gate_prod:
+      needs: gate_qa
+      runs-on: ubuntu-latest
+      name: Check prod
+      environment: prod
+      steps:
+        - run: |
+            echo "Check prod"
+
+      qa_deploy:
+      needs: gate_prod
+      runs-on: ubuntu-latest
+      environment: prod
+      steps:
+        - run: |
+            echo "Doing even more stuff"
+          
